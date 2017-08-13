@@ -1,0 +1,12 @@
+# Snippets for Go
+
+priority 10
+
+# test function
+snippet ttest "func TestXYZ(t *testing.T) { ... }"
+func Test${1:Function}(t *testing.T) {
+	${0:${VISUAL}}
+}
+endsnippet
+
+# vim:ft=snippets:
