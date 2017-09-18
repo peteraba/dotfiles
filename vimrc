@@ -160,8 +160,8 @@ Plug 'vim-scripts/bufexplorer.zip'
 " A vim script to provide CamelCase motion through words (fork of inkarkat's
 " camelcasemotion script)
 "
-" See: https://github.com/bkad/camelcasemotion
-Plug 'bkad/camelcasemotion'
+" See: https://github.com/chaoren/vim-wordmotion
+Plug 'chaoren/vim-wordmotion'
 
 " EasyMotion provides a much simpler way to use some motions in vim. It takes
 " the <number> out of <number>w or <number>f{char} by highlighting all
@@ -244,7 +244,7 @@ Plug 'tpope/vim-unimpaired'
 " Insert or delete brackets, parens, quotes in pair
 "
 " See: https://github.com/jiangmiao/auto-pairs
-Plug 'jiangmiao/auto-pairs'
+" Plug 'jiangmiao/auto-pairs'
 
 """ DISABLED!
 "
@@ -416,22 +416,23 @@ Plug 'leafgarland/typescript-vim', {'for': 'ts'}
 " See: https://github.com/cburroughs/pep8.py
 Plug 'cburroughs/pep8.py', {'for': 'py'}
 
+" See: https://github.com/vim-php/tagbar-phpctags.vim
+Plug 'vim-php/tagbar-phpctags.vim'
+
 " Twig syntax highlighting, snipMate, etc.
 "
 " See: https://github.com/evidens/vim-twig
 Plug 'evidens/vim-twig', {'for': 'php'}
 
-""" DISABLED!
-"
 " Up-to-date PHP syntax file
 "
 " See: https://github.com/stanangeloff/php.vim
-" Plug 'stanangeloff/php.vim', {'for': 'php'}
+Plug 'stanangeloff/php.vim', {'for': 'php'}
 
 " Types "use" statements for you
 "
 " See: https://github.com/arnaud-lb/vim-php-namespace
-" Plug 'arnaud-lb/vim-php-namespace', {'for': 'php'}
+Plug 'arnaud-lb/vim-php-namespace', {'for': 'php'}
 
 """"""""""""""""""""""""""""""""""""""""
 " Backend
@@ -440,7 +441,7 @@ Plug 'evidens/vim-twig', {'for': 'php'}
 " DBGP debugger
 "
 " See: https://github.com/joonty/vdebug
-Plug 'joonty/vdebug', {'for': 'go'}
+Plug 'joonty/vdebug'
 
 " Vim configuration for Rust.
 "
@@ -810,11 +811,14 @@ nnoremap <leader>gcm :Gcommit<CR>
 " ctrlp.vim
 """"""""""""""""""""""""""""""""""""""""
 
-let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_working_path_mode = 'wra'
 let g:ctrlp_custom_ignore = {
             \ 'dir':  '\v[\/](\.git|\.hg|\.svn|vendor|tmp|dist|node_modules)$',
             \ }
 let g:ctrlp_switch_buffer = 'et'
+" let g:ctrlp_clear_cache_on_exit = 1
+let g:ctrlp_max_files = 0
+let g:ctrlp_max_depth = 40
 
 nnoremap <leader>. :CtrlPTag<cr>
 
@@ -845,17 +849,19 @@ map <leader>g :Ack
 vnoremap <silent> gv :call VisualSelection('gv', '')<CR>
 
 """"""""""""""""""""""""""""""""""""""""
-" camelcasemotion
+" wordmotion
 """"""""""""""""""""""""""""""""""""""""
 
-map <silent> w <Plug>CamelCaseMotion_w
-map <silent> b <Plug>CamelCaseMotion_b
-map <silent> e <Plug>CamelCaseMotion_e
-map <silent> ge <Plug>CamelCaseMotion_ge
-sunmap w
-sunmap b
-sunmap e
-sunmap ge
+" let g:wordmotion_mappings = {
+" \ 'w' : '<M-w>',
+" \ 'b' : '<M-b>',
+" \ 'e' : '<M-e>',
+" \ 'ge' : 'g<M-e>',
+" \ 'aw' : 'a<M-w>',
+" \ 'iw' : 'i<M-w>'
+" \ '<C-R><C-W>' : '<C-R><M-w>'
+" \ }
+let g:wordmotion_prefix = '<Leader>'
 
 """"""""""""""""""""""""""""""""""""""""
 " vim-easymotion
@@ -936,6 +942,7 @@ nmap <leader>tb :TagbarOpenAutoClose<CR>
 
 set tags=./.git/tags
 autocmd FileType go let g:easytags_cmd = '/usr/local/bin/gotags'
+autocmd FileType php let g:easytags_cmd = '/usr/local/bin/phpctags'
 let g:easytags_dynamic_files = 1
 let g:easytags_file = './.git/tags'
 let g:easytags_async = 1
@@ -1071,24 +1078,31 @@ augroup END
 """"""""""""""""""""""""""""""""""""""""
 
 " Import classes or functions (add use statements)
-" function! IPhpInsertUse()
-"     call PhpInsertUse()
-"     call feedkeys('a',  'n')
-" endfunction
-" autocmd FileType php inoremap <Leader>u <Esc>:call IPhpInsertUse()<CR>
-" autocmd FileType php noremap <Leader>u :call PhpInsertUse()<CR>
+function! IPhpInsertUse()
+    call PhpInsertUse()
+    call feedkeys('a',  'n')
+endfunction
+autocmd FileType php inoremap <Leader>u <Esc>:call IPhpInsertUse()<CR>
+autocmd FileType php noremap <Leader>u :call PhpInsertUse()<CR>
 
 " Sort existing use statements alphabetically
-" autocmd FileType php inoremap <Leader>s <Esc>:call PhpSortUse()<CR>
-" autocmd FileType php noremap <Leader>s :call PhpSortUse()<CR>
-" let g:php_namespace_sort_after_insert = 1
+autocmd FileType php inoremap <Leader>s <Esc>:call PhpSortUse()<CR>
+autocmd FileType php noremap <Leader>s :call PhpSortUse()<CR>
+let g:php_namespace_sort_after_insert = 1
 
 " Make class or function names fully qualified
 "
-" function! IPhpExpandClass()
-"     call PhpExpandClass()
-"     call feedkeys('a', 'n')
-" endfunction
-" autocmd FileType php inoremap <Leader>e <Esc>:call IPhpExpandClass()<CR>
-" autocmd FileType php noremap <Leader>e :call PhpExpandClass()<CR>
+function! IPhpExpandClass()
+    call PhpExpandClass()
+    call feedkeys('a', 'n')
+endfunction
+autocmd FileType php inoremap <Leader>e <Esc>:call IPhpExpandClass()<CR>
+autocmd FileType php noremap <Leader>e :call PhpExpandClass()<CR>
+
+""""""""""""""""""""""""""""""""""""""""
+" tagbar-phpctags
+""""""""""""""""""""""""""""""""""""""""
+
+let g:tagbar_phpctags_bin='/usr/local/bin/phpctags'
+let g:tagbar_phpctags_memory_limit = '1024M'
 
