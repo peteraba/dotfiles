@@ -55,7 +55,11 @@ function lig_last_status() {
 }
 
 function lig_current_branch() {
-  echo "${lig_highlight2}\uE0A0 $(git_current_branch)${lig_reset}"
+  if [ -n "${LIG_DANGEROUS_BRANCH}" ] && [ -n "$(git remote get-url origin | grep '${LIG_DANGEROUS_BRANCH}')" ]; then
+    echo "${lig_alert}\uE0A0 $(git_current_branch)${lig_reset}"
+  else
+    echo "${lig_highlight2}\uE0A0 $(git_current_branch)${lig_reset}"
+  fi
 }
 
 function lig_box_name {

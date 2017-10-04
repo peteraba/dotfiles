@@ -179,3 +179,22 @@ fi
 TERMINAL="i3-sensible-terminal"
 HOME_HOST="paba-ml"
 
+# Using the lig theme the remote branch will be grepped and if this is not empty, than the branch will be desplayed in red
+LIG_DANGEROUS_BRANCH=""
+
+function gp()
+{
+  if [ -n "${LIG_DANGEROUS_BRANCH}" ] && [ -n "$(git remote get-url origin | grep '${LIG_DANGEROUS_BRANCH}')" ]; then
+    echo ""
+    echo "Pushing to a dangerous remote branch!!!"
+    echo ""
+
+    sleep 1
+
+    echo "The push will continue in 3 seconds..."
+
+    sleep 3
+  fi
+
+  git push
+}
