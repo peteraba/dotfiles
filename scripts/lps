@@ -1,0 +1,76 @@
+#! /usr/bin/env python3
+
+import subprocess
+import sys
+import re
+
+# Search term provided as first argument
+ps = subprocess.Popen(('lpass', 'ls'), stdout=subprocess.PIPE)
+output = subprocess.check_output(('grep', sys.argv[1]), stdin=ps.stdout)
+ps.wait()
+
+# Split results to lines
+lines = output.splitlines()
+if len(lines) < 1:
+    print ('Notes not found: ' + sys.argv[1])
+    sys.exit(1)
+
+# Select result to find password for
+lineCount = 0
+if len(lines) > 1:
+    lineCount = -1
+    print ('You need to be more precise. For "%s" there were %d items found.' % (sys.argv[1], len(lines)))
+    for idx, line in enumerate(lines):
+        print ('%d. %s' % (idx+1, line.decode('utf-8')))
+
+    while lineCount < 0:
+        try:
+            s = int(input('Enter your input: '))
+            if s > 0 and s < len(lines) + 1:
+                lineCount = s - 1
+        except ValueError:
+            lineCount = -1
+
+# Extract important information from selected result
+m = re.search('([\S]+) \[id\: (\d+)\]', lines[lineCount].decode('utf-8'))
+print ('Secret found: "%s". Id: "%s"' % (m.group(1), m.group(2)))
+
+# Retrieve information for selected result
+cp = subprocess.run(["lpass", "show", m.group(2)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+if cp.returncode < 0:
+    print ('Child was terminated by signal', -cp.returncode, file=sys.stderr)
+    sys.exit(4)
+out = cp.stdout.decode('utf-8')
+
+# Extract notes or password
+m2 = re.search('Password: (\S*)', out)
+p = ''
+if m2 and m2.group(1):
+    p = m2.group(1)
+else:
+    m2 = re.search('Notes: (.*)$', out)
+    if not m2 or not m2.group(1):
+        print ('Password not found.')
+        print (out)
+        sys.exit(8)
+
+    p = m2.group(1)
+
+#print ('Password found: "%s"' % (p))
+
+# Put text to clipboard
+def paste(str, p=True, c=True):
+    from subprocess import Popen, PIPE
+
+    if p:
+        p = subprocess.Popen(['xsel', '-pi'], stdin=subprocess.PIPE)
+        p.communicate(input=str)
+
+    if c:
+        p = subprocess.Popen(['xsel', '-bi'], stdin=subprocess.PIPE)
+        p.communicate(input=str)
+
+paste(p.encode('utf-8'))
+
+print ('Copying to clipboard was succesful.')
+
