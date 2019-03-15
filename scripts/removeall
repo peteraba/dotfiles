@@ -1,0 +1,11 @@
+#! /usr/bin/env zsh
+
+setopt +o nomatch
+
+rm -f *.zip
+rm -f *.rar
+rm -f *.tar.xz
+rm -f *.tgz
+rm -f *.tar.gz
+rm -f *.0*
+

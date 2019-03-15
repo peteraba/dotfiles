@@ -1,0 +1,8 @@
+#! /usr/bin/env zsh
+
+#yaourt -Syu --aur
+yay
+sudo npm -g update
+sudo npm -g outdated
+yarn global upgrade
+sudo rm -rf ~/.cache/yarn ~/.cache/yay ~/.cache/npm ~/.cache/go-build ~/.cache/typescript /var/cache/pacman

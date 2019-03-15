@@ -417,7 +417,7 @@ Plug 'leafgarland/typescript-vim', {'for': 'ts'}
 Plug 'cburroughs/pep8.py', {'for': 'py'}
 
 " See: https://github.com/vim-php/tagbar-phpctags.vim
-Plug 'vim-php/tagbar-phpctags.vim'
+"Plug 'vim-php/tagbar-phpctags.vim'
 
 " Twig syntax highlighting, snipMate, etc.
 "

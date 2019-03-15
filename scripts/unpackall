@@ -1,0 +1,36 @@
+#! /usr/bin/env zsh
+
+setopt +o nomatch
+
+for f in *.zip(N); do
+  unzip "${f}" -d "${f:r}"
+done
+
+for f in *.part01.rar(N); do
+  unrar x "${f}"
+done
+
+for f in *.part1.rar(N); do
+  unrar x "${f}"
+done
+
+for f in *.rar(N); do
+  unrar x "${f}"
+done
+
+for f in *.tg.xz(N); do
+  tar xvf "${f}"
+done
+
+for f in *.tgz(N); do
+  tar -xzvf "${f}"
+done
+
+for f in *.tar.gz(N); do
+  tar -xzvf "${f}"
+done
+
+for f in *.001(N); do
+  cat "${f:r}".0* > "${f:r}"
+done
+
